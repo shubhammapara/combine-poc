@@ -39,7 +39,7 @@ jobs:
           name: Execute Classification Test Suite
           command: |
             . venv/bin/activate
-            behave adlake/classfication -f allure_behave.formatter:AllureFormatter -o reports/
+            behave adlake/classification -f allure_behave.formatter:AllureFormatter -o reports/
 
       - run:
           name: Execute Collection Test Suite
