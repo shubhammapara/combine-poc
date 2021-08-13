@@ -31,7 +31,10 @@ jobs:
           key: adlake-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
             - "venv"
-
+      - run:
+          name: List
+          command: |
+            ls
       - run:
           name: Execute Classification Test Suite
           command: |
