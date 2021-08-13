@@ -47,6 +47,11 @@ jobs:
             . venv/bin/activate
             behave adlake/collections -f allure_behave.formatter:AllureFormatter -o reports/
 
+      - run:
+          name: List
+          command: |
+            ls reports/
+
 workflows:
   develop:
     jobs:
