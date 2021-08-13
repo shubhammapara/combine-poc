@@ -1,0 +1,54 @@
+version: 2.1
+
+executors:
+  my-executor:
+    docker:
+      - image: circleci/python:3.6.4
+    resource_class: large
+orbs:
+  browser-tools: circleci/browser-tools@1.0.1
+
+jobs:
+  test-job:
+    executor: my-executor
+    steps:
+      - checkout
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+
+      - restore_cache:
+          keys:
+            - adlake-{{ .Branch }}-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: Install Dependencies
+          command: |
+            python3.6 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+
+      - save_cache:
+          key: adlake-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          paths:
+            - "venv"
+
+      - run:
+          name: Execute Classification Test Suite
+          command: |
+            . venv/bin/activate
+            behave adlake/classfication -f allure_behave.formatter:AllureFormatter -o reports/
+
+      - run:
+          name: Execute Collection Test Suite
+          command: |
+            . venv/bin/activate
+            behave adlake/collections -f allure_behave.formatter:AllureFormatter -o reports/
+
+workflows:
+  develop:
+    jobs:
+      - test-job:
+          filters:
+            branches:
+              only:
+                - master
